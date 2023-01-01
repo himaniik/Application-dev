@@ -1,122 +1,137 @@
-﻿using InventoryMangementSystem.Data.Models;
-using Java.Sql;
-using Microsoft.Maui.Controls;
+﻿using Microsoft.Maui.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using InventoryMangementSystem.Data.Models;
 
 namespace InventoryMangementSystem.Data
 {
-    public class OrderService
-    {
-        //getting the json file
-        public static List<Order> GetAll()
-        {
-            string orderPath = Utils.GetAppOrdersFilePath();
+	public class OrderService
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public static List<Order> GetAllOrders()
+		{
+			string orderPath = UtilsService.GetAppOrdersFilePath();
 
-            if (!File.Exists(orderPath))
-            {
-                return new List<Order>();
-            }
+			if (!File.Exists(orderPath))
+			{
+				return new List<Order>();
+			}
 
-            //reads the json file
-            var json = File.ReadAllText(orderPath);
+			var json = File.ReadAllText(orderPath);
 
-            var result = JsonSerializer.Deserialize<List<Order>>(json);
+			var result = JsonSerializer.Deserialize<List<Order>>(json);
 
-            return result;
-        }
+			return result;
+		}
 
-        //savin the list again into json file
-        public static void SaveAll(List<Order> order)
-        {
-            var directoryPath = Utils.GetAppDirectoryPath();
-            var orderPath = Utils.GetAppOrdersFilePath();
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="order"></param>
+		public static void SaveAllOrders(List<Order> order)
+		{
+			var directoryPath = UtilsService.GetAppDirectoryPath();
 
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
+			var orderPath = UtilsService.GetAppOrdersFilePath();
 
-            var json = JsonSerializer.Serialize(order);
+			if (!Directory.Exists(directoryPath))
+			{
+				Directory.CreateDirectory(directoryPath);
+			}
 
-            File.WriteAllText(orderPath, json);
-        }
+			var json = JsonSerializer.Serialize(order);
 
-        //creating an order
+			File.WriteAllText(orderPath, json);
+		}
 
-        public static List<Order> CreateOrder(Guid userId, Guid productId, int quantity)
-        {
-            var day = (int)DateTime.Now.DayOfWeek + 1;
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <param name="itemId"></param>
+		/// <param name="quantity"></param>
+		/// <returns></returns>
+		/// <exception cref="Exception"></exception>
+		public static List<Order> CreateOrder(Guid userId, Guid itemId, int quantity)
+		{
+			var getOrders = GetAllOrders();
 
-            var time = (int)DateTime.Now.Hour;
+			var createOrder = new Order()
+			{
+				OrderedBy = userId,
+				ItemId = itemId,
+				Quantity = quantity,
+			};
 
-            //day mon-fri and time 9-6
-            if(day > 2 && day < 6)
-            {
-                if (time > 9 && time < 18)
-                {
-                    var getOrder = GetAll();
+			getOrders.Add(createOrder);
 
-                    var getProducts = ProductService.GetAll();
+			SaveAllOrders(getOrders);
 
-                    var product = getProducts.FirstOrDefault(x => x.Id == productId);
+			return getOrders;
+		}
 
-                    var createOrder = new Order()
-                    {
-                        OrderedBy = userId,
-                        ProductId = productId,
-                        Quantity = quantity,
-                        CreatedAt = DateTime.Now,
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="userId"></param>
+		/// <param name="orderId"></param>
+		/// <param name="quantity"></param>
+		/// <returns></returns>
+		/// <exception cref="Exception"></exception>
+		public static List<Order> ApproveOrder(Guid userId, Guid orderId, int quantity)
+		{
 
-                    };
-                    getOrder.Add(createOrder);
-                    SaveAll(getOrder);
+			///
+			var day = (int)DateTime.Now.DayOfWeek + 1;
 
-                    return getOrder;
+			///
+			var time = (int)DateTime.Now.Hour;
 
-                }
-                else
-                {
-                    throw new Exception("Order can be place only on working days i.e Monday-Friday");
-                }
-            }
-            else
-            {
-                throw new Exception("Order can be place only between 9 am to 6pm");
-            }
-            }
+			if (day > 2 && day < 6)
+			{
+				if (time > 9 && time < 18)
+				{
+					var getOrders = GetAllOrders();
 
-           
+					var getItems = ItemService.GetAllItems();
 
-        //update an order
-        public static List<Order> UpdateOrder(Guid userId, Guid orderId, int quantity)
-        {
-            var getOrder = GetAll();
-            var getProducts = ProductService.GetAll();
+					var order = getOrders.FirstOrDefault(x => x.Id == orderId);
 
-            var order = getOrder.FirstOrDefault(x => x.Id == orderId);
+					var item = getItems.FirstOrDefault(x => x.Id == order.ItemId);
 
-            var product = getProducts.FirstOrDefault(x => x.Id == order.ProductId);
+					if (order == null)
+					{
+						throw new Exception("Order not found, select a valid order.");
+					}
 
-            if (order == null)
-            {
-                throw new Exception("Order not found.");
-            }
+					order.ApprovedBy = userId;
+					order.Id = orderId;
+					order.IsApproved = true;
 
-            order.ApprovedBy = userId;
-            order.Id = orderId;
-            product.Quantity = quantity;
-            order.IsApproved = true;
+					item.Quantity = quantity;
 
-            SaveAll(getOrder);
-            return getOrder;
+					SaveAllOrders(getOrders);
 
+					ItemService.SaveAllItems(getItems);
 
-
-        }
-    }
+					return getOrders;
+				}
+				else
+				{
+					throw new Exception("Order can be approved only on working days i.e Monday - Friday.");
+				}
+			}
+			else
+			{
+				throw new Exception("Order can be approved only between 9am to 6pm.");
+			}
+		}
+	}
 }

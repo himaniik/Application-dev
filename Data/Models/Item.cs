@@ -6,15 +6,23 @@ using System.Threading.Tasks;
 
 namespace InventoryMangementSystem.Data.Models
 {
-    public class Product
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Item
     {
         public Guid Id  { get; set; } = Guid.NewGuid();
-        public string Name   { get; set; }
-        public float Price    { get; set; }
-        public int Quantity{ get; set; }
+        
+        public string Name { get; set; }
+        
+        public float Price { get; set; }
+        
+        public int Quantity { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        
         public Guid CreatedBy { get; set; } 
+        
         public DateTime ModifiedAt  { get; set; }
     }
 }

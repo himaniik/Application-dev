@@ -6,14 +6,22 @@ using System.Threading.Tasks;
 
 namespace InventoryMangementSystem.Data.Models
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Order
     {
         public Guid Id { get; set; } = Guid.NewGuid();
-        public int Quantity { get; set; }
-        public Guid ApprovedBy { get; set; }
-        public Guid ProductId { get; set; }
+        
+        public Guid ItemId { get; set; }
+
         public Guid OrderedBy { get; set; }
-        public DateTime CreatedAt { get; set; }
+        
+        public int Quantity { get; set; }
+        
+        public Guid ApprovedBy { get; set; }
+        
+        public DateTime OrderedAt { get; set; } = DateTime.Now;
        
         public bool IsApproved { get; set; } = false;
 

@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace InventoryMangementSystem.Data.Models
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public enum Role
-    {
-        Admin,
-        Staff
-    }
+	/// <summary>
+	/// 
+	/// </summary>
+	public class Statistics
+	{
+		public Guid ItemId { get; set; }
+
+		public int Quantity { get; set; }
+	}
 }

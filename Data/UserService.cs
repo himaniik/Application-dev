@@ -10,17 +10,19 @@ namespace InventoryMangementSystem.Data
 {
     public class UserService
     {
-        //gets the users json file
-        public static List<User> GetAll()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static List<User> GetAllUsers()
         {
-            string userPath = Utils.GetAppUsersFilePath();
+            string userPath = UtilsService.GetAppUsersFilePath();
 
             if (!File.Exists(userPath))
             {
                 return new List<User>();
             }
 
-            //reads the json file
             var json = File.ReadAllText(userPath);
 
             var result = JsonSerializer.Deserialize<List<User>>(json);
@@ -28,11 +30,15 @@ namespace InventoryMangementSystem.Data
             return result;
         }
 
-        //to store the list of users into json file into a specified folder
-        public static void SaveAll(List<User> users)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="users"></param>
+        public static void SaveAllUsers(List<User> users)
         {
-            var directoryPath = Utils.GetAppDirectoryPath();
-            var userPath = Utils.GetAppUsersFilePath();
+            var directoryPath = UtilsService.GetAppDirectoryPath();
+
+            var userPath = UtilsService.GetAppUsersFilePath();
 
             if (!Directory.Exists(directoryPath))
             {
@@ -44,10 +50,18 @@ namespace InventoryMangementSystem.Data
             File.WriteAllText(userPath, json);
         }
 
-        //creater id
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="name"></param>
+        /// <param name="password"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static List<User> CreateUser(Guid Id, string name, string password, Role role)
         {
-            var getUser = GetAll();
+            var getUser = GetAllUsers();
 
             var usernameExists = getUser.Any(x => x.Username == name);
 
@@ -67,37 +81,56 @@ namespace InventoryMangementSystem.Data
             {
                 CreatedBy = Id,
                 Username = name,
-                PasswordHash = Utils.HashSecret(password), //enetered password should be in encrypted form
+                PasswordHash = UtilsService.HashSecret(password), //enetered password should be in encrypted form
                 Role = role
             };
 
             getUser.Add(createUser);
-            SaveAll(getUser);
+
+			SaveAllUsers(getUser);
+            
             return getUser;
 
         }
-        //user id
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static List<User> DeleteUser(Guid Id)
         {
-            var getUser = GetAll();
+            var getUser = GetAllUsers();
 
-            var user = getUser.FirstOrDefault(x => x.Id == Id);
+            var removeUser = getUser.FirstOrDefault(x => x.Id == Id);
 
-            if (user == null)
+            if (removeUser == null)
             {
                 throw new Exception("User not Found");
             }
 
-            getUser.Remove(user);
-            SaveAll(getUser);
+            getUser.Remove(removeUser);
+
+			SaveAllUsers(getUser);
+            
             return (getUser);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static User LoginUser (string username, string password)
         {
             
-            var users = GetAll();
-            //select * from users where username = username
+            var users = GetAllUsers();
+
+            // Equivalent to "SELECT * FROM USERS WHERE Username = username"
+            
             var user = users.FirstOrDefault(x => x.Username == username);
 
             if (user == null)
@@ -105,7 +138,7 @@ namespace InventoryMangementSystem.Data
                 throw new Exception("Invalid username or password");
             }
 
-            bool passwordIsValid = Utils.VerifyHash(password, user.PasswordHash);
+            bool passwordIsValid = UtilsService.VerifyPasswordHash(password, user.PasswordHash);
 
             if (!passwordIsValid)
             {
@@ -115,6 +148,4 @@ namespace InventoryMangementSystem.Data
             return user;
         }
     }
-
-
 }

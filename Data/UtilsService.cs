@@ -7,11 +7,16 @@ using System.Threading.Tasks;
 
 namespace InventoryMangementSystem.Data
 {
-    public class Utils
+    public class UtilsService
         
     {
         private const char _segmentDelimiter = ':';
-        //hash --> process to encrypt passowrd
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         public static string HashSecret(string input)
         {
             var saltSize = 16;
@@ -32,8 +37,13 @@ namespace InventoryMangementSystem.Data
 
         }
 
-        public static bool VerifyHash(string input, string hashString)
-            // process to verify the user entered pw with the stored encrypted pw
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="hashString"></param>
+        /// <returns></returns>
+        public static bool VerifyPasswordHash(string input, string hashString)
         {
             var segments = hashString.Split(_segmentDelimiter);
             var hash = Convert.FromHexString(segments[0]);
@@ -50,22 +60,38 @@ namespace InventoryMangementSystem.Data
 
             return CryptographicOperations.FixedTimeEquals(inputHash, hash);
         }
-        //spacifying a folder for the details of the program
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string GetAppDirectoryPath()
         {
             return @"C:\Users\Himani\Desktop\semester-5\ad\InventoryMangementSystem\wwwroot\data";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string GetAppUsersFilePath()
         {
             return Path.Combine(GetAppDirectoryPath(), "users.json");
         }
 
-        public static string GetAppProductsFilePath()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static string GetAppItemsFilePath()
         {
-            return Path.Combine(GetAppDirectoryPath(), "products.json");
+            return Path.Combine(GetAppDirectoryPath(), "items.json");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static string GetAppOrdersFilePath()
         {
             return Path.Combine(GetAppDirectoryPath(), "orders.json");
