@@ -2,7 +2,13 @@
 
 
 <div class="side-div">
-	<button type="button" class="btn btn-primary btn-lg" @onclick="OpenUserDialog">Add Users</button>
+	<div>
+		<div class="input-group mb-3">
+			<input type="text" class="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="button-addon2">
+			<button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+		</div>
+	</div>
+	<div><button type="button" class="btn btn-primary btn-lg" @onclick="OpenUserDialog">Add Users</button></div>
 	
 </div>
 <table class="table">
@@ -33,6 +39,8 @@
 			<div class="mb-3 form-check">
 				<input type="checkbox" class="form-check-input" id="exampleCheck1">
 				<label class="form-check-label" for="exampleCheck1">Admin</label>
+			</div>
+				<div class="mb-3 form-check">
 				<input type="checkbox" class="form-check-input" id="exampleCheck1">
 				<label class="form-check-label" for="exampleCheck1">Staff</label>
 			</div>
