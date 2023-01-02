@@ -104,6 +104,8 @@ namespace InventoryMangementSystem.Data
 
 					var order = getOrders.FirstOrDefault(x => x.Id == orderId);
 
+					// item is checked to extract the quantity in the stock
+
 					var item = getItems.FirstOrDefault(x => x.Id == order.ItemId);
 
 					if (order == null)
@@ -114,8 +116,10 @@ namespace InventoryMangementSystem.Data
 					order.ApprovedBy = userId;
 					order.Id = orderId;
 					order.IsApproved = true;
+					
+					//-= once approved quantity in the stcok decreases
 
-					item.Quantity = quantity;
+					item.Quantity -= quantity;
 
 					SaveAllOrders(getOrders);
 
