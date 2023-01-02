@@ -56,6 +56,7 @@ namespace InventoryMangementSystem.Data
         /// <param name="userId"></param>
         /// <param name="name"></param>
         /// <param name="quantity"></param>
+        /// <param name="price"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         public static List<Item> CreateItem(Guid userId, string name, int quantity, float price)
@@ -88,9 +89,10 @@ namespace InventoryMangementSystem.Data
         /// <param name="itemId"></param>
         /// <param name="name"></param>
         /// <param name="quantity"></param>
+        /// <param name="price"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static List<Item> UpdateItem(Guid itemId, string name, int quantity)
+        public static List<Item> UpdateItem(Guid itemId, string name, int quantity, float price)
         {
             var getItems = GetAllItems();
 
@@ -103,6 +105,7 @@ namespace InventoryMangementSystem.Data
 
 			updateItem.Name = name;
 			updateItem.Quantity = quantity;
+			updateItem.Price = price;
 			updateItem.ModifiedAt = DateTime.Now;
 
 			SaveAllItems(getItems);

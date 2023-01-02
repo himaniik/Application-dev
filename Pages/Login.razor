@@ -1,5 +1,71 @@
 ﻿@page "/login"
 
-@code {
+@inject NavigationManager NavManager
 
+<form @onsubmit="LoginUser">
+	<div class="form-outline mb-4">
+		<input for="text" class="form-control" type="text" @bind="_username" placeholder="Enter your username" />
+		<label for="text" class="form-label">Email address</label>
+	</div>
+
+	<div class="form-outline mb-4">
+		<input for="password" class="form-control" type="password" @bind="_password" placeholder="Enter your password" />
+		<label for="password" class="form-label">Password</label>
+	</div>
+
+	@if (!string.IsNullOrEmpty(_errorMessage))
+	{
+		<div class="alert alert-danger" role="alert">
+			<span class='oi oi-warning' /> @_errorMessage
+		</div>
+	}
+	<button type="submit" class="btn btn-primary btn-block mb-4" >Sign in</button>
+</form>
+
+@code {
+	[CascadingParameter]
+	private GlobalState _globalState { get; set; }
+
+	private string _username { get; set; }
+
+	private string _password { get; set; }
+
+	private string _errorMessage = "";
+
+	protected override void OnInitialized()
+	{
+		try
+		{
+			var user = UserService.LoginUser(UserService.Seedname, UserService.SeedPassword);
+		}
+		catch
+		{
+
+		}
+
+		_globalState.User = null;
+
+		_errorMessage = "";
+	}
+
+	private void LoginUser()
+	{
+		try
+		{
+			_errorMessage = "";
+
+			var user = _globalState.User = UserService.LoginUser(_username, _password);
+
+			if (user != null)
+			{
+				NavManager.NavigateTo("/homepage");
+			}
+		}
+
+		catch (Exception e)
+		{
+			_errorMessage = e.Message;
+			Console.WriteLine(e);
+		}
+	}
 }

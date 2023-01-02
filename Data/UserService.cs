@@ -10,11 +10,27 @@ namespace InventoryMangementSystem.Data
 {
     public class UserService
     {
+		public const string Seedname = "admin";
+		public const string SeedPassword = "admin";
+
         /// <summary>
         /// 
         /// </summary>
-        /// <returns></returns>
-        public static List<User> GetAllUsers()
+		public static void SeedUsers()
+		{
+			var users = GetAllUsers().FirstOrDefault(x => x.Role == Role.Admin);
+
+			if (users == null)
+			{
+				CreateUser(Guid.Empty, Seedname, SeedPassword, Role.Admin);
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public static List<User> GetAllUsers()
         {
             string userPath = UtilsService.GetAppUsersFilePath();
 

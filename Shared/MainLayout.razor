@@ -1,17 +1,34 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager NavManager
 
 <div class="page">
-	<div class="sidebar">
-		<NavMenu />
-	</div>
+	@if (_globalState.User != null)
+	{
+		<div class="sidebar">
+			<NavMenu Username="@_globalState.User.Username" UserRole="@_globalState.User.Role" LogoutHandler="LogoutHandler" />
+		</div>
+	}
 
 	<main>
-		<div class="top-row px-4">
-			<a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-		</div>
-
 		<article class="content px-4">
-			@Body
+			<CascadingValue Value="@_globalState">
+				@Body
+			</CascadingValue>
 		</article>
 	</main>
 </div>
+
+@code {
+	private GlobalState _globalState = new();
+
+	protected override void OnInitialized()
+	{
+		UserService.SeedUsers();
+	}
+
+	private void LogoutHandler()
+	{
+		_globalState.User = null;
+		NavManager.NavigateTo("/login");
+	}
+}
