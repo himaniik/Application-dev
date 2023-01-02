@@ -12,12 +12,58 @@
 			<th></th>
 		</tr>
 	</thead>
-		
+
 	<tbody>
+		@foreach (var order in _orders)
+		{
+			<tr>
+				
+					<td>@order.Quantity</td>
+				
+
+
+
+				<td><button>Place Order</button></td>
+			</tr>
+		}
 	</tbody>
 </table>
 
+<ModalDialogBox Title="PLace Order" Label="Submit" OnClose="OnPlaceOrder">
+	<form class="row g-3">
+		<div class="col-auto">
+			<label for="number" class="form-label">Quantity</label>
+			<input @bind="_order.Quantity" type="number" class="form-control-plaintext">
+		</div>
+		
+	</form>
+
+</ModalDialogBox>
+
 @code {
+	private GlobalState _globalState { get; set; }
+	private List<Order> _orders { get; set; }
+	private Order _order { get; set; }
+	private bool _showPlaceOrderDialog { get; set; }
+	private void OrderDialog()
+	{
+		_showPlaceOrderDialog = true;
+		_order = new Order();
+	}
+
+	private void OnPlaceOrder(bool isClosed) {
+		if (isClosed)
+		{
+			_showPlaceOrderDialog = false;
+		}
+		else
+		{
+			_orders = ItemService.CreateOrder(_globalState.User.Id, _order.Quantity);
+			_showPlaceOrderDialog = false;
+		}
+	}
+
+
 
 
 }

@@ -16,43 +16,74 @@
 		<tr>
 			<th scope="col">Username</th>
 			<th scope="col">Role</th>
-			<th scope="col">Created At</th>
 			<th scope="col">Created By</th>
 		</tr>
 	</thead>
 	<tbody>
+		@foreach (var user in _users){
+			<tr>
+			<td> @user.Username </td>
+			<td> @user.Role </td>
+			<td> @user.CreatedBy </td>
+			<td>
+				<button>Delete</button>
+				<button>Edit</button>
+			</td>
+			</tr>
+			
+
+		}
 	</tbody>
 </table>
 
 @if(_showAddUserDialog){
-	<ModalDialogBox Title="Add User" Label="Add">
+	<ModalDialogBox Title="Add User" Label="Add" OnClose="OnAddItem">
 		<form>
 			<div class="mb-3">
 				<label for="exampleInputEmail1" class="form-label">Username</label>
-				<input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-				<div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+				<input @bind="_user.Username" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+				
 			</div>
 			<div class="mb-3">
 				<label for="exampleInputPassword1" class="form-label">Password</label>
-				<input type="password" class="form-control" id="exampleInputPassword1">
+				<input @bind="_user.PasswordHash" type="password" class="form-control" id="exampleInputPassword1">
 			</div>
 			<div class="mb-3 form-check">
-				<input type="checkbox" class="form-check-input" id="exampleCheck1">
+				<input @bind="_user.Role" type="checkbox" class="form-check-input" id="exampleCheck1">
 				<label class="form-check-label" for="exampleCheck1">Admin</label>
 			</div>
 				<div class="mb-3 form-check">
 				<input type="checkbox" class="form-check-input" id="exampleCheck1">
 				<label class="form-check-label" for="exampleCheck1">Staff</label>
 			</div>
-			<button type="submit" class="btn btn-primary">Add</button>
 		</form>
 	</ModalDialogBox>
 }
 
 @code {
+
+	private GlobalState _globalState { get; set; }
+	private List<User> _users { get; set; }
+	private User _user { get; set; }
 	private bool _showAddUserDialog { get; set; }
 	private void OpenUserDialog(){
 		_showAddUserDialog = true;
+		_user = new User();
+	}
+
+	protected override void OnInitialized()
+	{
+		_users = UserService.GetAllUsers();
+	}
+
+
+	private void OnAddItem(bool isClosed){
+		if(isClosed){
+			_showAddUserDialog = false;
+		}
+		else{
+			_users = UserService.CreateUser(_globalState.User.Id, _user.Username, _user.PasswordHash, _user.Role);
+		}
 	}
 	//logical part
 }

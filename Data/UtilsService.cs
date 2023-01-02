@@ -67,7 +67,7 @@ namespace InventoryMangementSystem.Data
         /// <returns></returns>
         public static string GetAppDirectoryPath()
         {
-            return @"C:\Users\ROG\OneDrive\Desktop\New folder\Application-dev\wwwroot\data";
+            return @"C:\Users\Himani\Desktop\sem-5\app_d\Application-dev\wwwroot\data";
         }
 
         /// <summary>
