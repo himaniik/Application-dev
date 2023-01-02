@@ -1,30 +1,122 @@
 ﻿@page "/items"
 <div class="side-div">
-    <div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="button-addon2">
-			<button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
-		</div>
-    <button type="button" class="btn btn-primary btn-lg" @onclick="OpenAddItemsDialog">Add Items</button>
+	<div class="input-group mb-3">
+		<input type="text" class="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="button-addon2">
+		<button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+	</div>
+	<button type="button" class="btn btn-primary btn-lg" @onclick="OpenAddItemsDialog">Add Items</button>
 </div>
 <table class="table">
-    <thead>
-        <tr>
-          
-            <th scope="col">Name</th>
-            <th scope="col">Price</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Created By</th>
+	<thead>
+		<tr>
 
-        </tr>
-    </thead>
-    <tbody>
-       
-    </tbody>
+			<th scope="col">Name</th>
+			<th scope="col">Price</th>
+			<th scope="col">Quantity</th>
+			<th scope="col">Created At</th>
+			<th scope="col">Created By</th>
+
+		</tr>
+	</thead>
+	<tbody>
+		@{
+			//to iterate individual item from the list
+			foreach (var item in _items)
+			{
+				<tr>
+					<td> @item.Name</td>
+					<td> @item.Price</td>
+					<td> @item.Quantity</td>
+					<td> @item.CreatedAt</td>
+					<td> @item.CreatedBy</td>
+					<td>
+						<button class="btn btn-outline-secondary" type="button" @onclick="()=>OpenUpdateItemDialog(item)">
+							<span class="oi oi-pencil" /> &nbsp; Edit
+						</button>
+						<button class="btn btn-outline-danger" type="button" @onclick="()=>OpenDeleteItemDialog(item)">
+							<span class="oi oi-delete" /> &nbsp; Delete
+						</button>
+					</td>
+				</tr>
+			}
+		}
+	</tbody>
 </table>
+
+@if (_showAddItemsDialog == true)
+{
+	<ModalDialogBox Title="Add Items" Label="Add" OnClose="@OnAddItem">
+		<form class="row g-3">
+			<div class="col-auto">
+				<label for="text" class="form-label">Name</label>
+				<input @bind="_item.Name" type="text" class="form-control-plaintext">
+			</div>
+			<div class="col-auto">
+				<label for="number" class="form-labeel">Quantity</label>
+				<input @bind="_item.Quantity" type="number" class="form-control"  placeholder="Password">
+			</div>
+			<div class="col-auto">
+				<label for="number" class="form-label">Price</label>
+				<input @bind="_item.Price" type="number" class="form-control" placeholder="Password">
+			</div>
+			
+		</form>
+
+	</ModalDialogBox>
+
+}
+
+@if (_showUpdateItemsDialog == true)
+{
+	<ModalDialogBox Title="Update Items" Label="Update" OnClose="@OnUpdateItem">
+
+	</ModalDialogBox>
+}
+
+
 @code {
-    private bool _showAddItemsDialog { get; set; }
-    private void  OpenAddItemsDialog(){
-        _showAddItemsDialog = true;
-    }
+	[CascadingParameter]
+	private GlobalState _globalState { get; set; }
+	private List<Item> _items { get; set; }
+	private Item _item { get; set; }
+	private bool _showAddItemsDialog { get; set; }
+	private bool _showUpdateItemsDialog { get; set; }
+	private bool _showDeleteItemDialog { get; set; }
+
+	private void OpenAddItemsDialog()
+	{
+		_showAddItemsDialog = true;
+		_item = new Item();
+	}
+	private void OpenUpdateItemDialog(Item item)
+	{
+		_showUpdateItemsDialog = true;
+	}
+
+	private void OpenDeleteItemDialog(Item item)
+	{
+		_showDeleteItemDialog = true;
+	}
+
+
+	protected override void OnInitialized()
+	{
+		_items = ItemService.GetAllItems();
+	}
+
+	//to add and update items
+
+	private void OnAddItem(bool isClosed) { 
+		if(isClosed){
+			_showAddItemsDialog = false;
+		}
+		else{
+			_items = ItemService.CreateItem(_globalState.User.Id, _item.Name, _item.Quantity, _item.Price);
+		}
+	}
+
+	private void OnUpdateItem(bool isClosed){
+
+	}
+
 }

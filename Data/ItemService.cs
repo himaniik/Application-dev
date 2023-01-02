@@ -58,7 +58,7 @@ namespace InventoryMangementSystem.Data
         /// <param name="quantity"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static List<Item> CreateItem(Guid userId, string name, int quantity)
+        public static List<Item> CreateItem(Guid userId, string name, int quantity, float price)
         {
             if (quantity <= 0)
             {
@@ -71,7 +71,8 @@ namespace InventoryMangementSystem.Data
             {
                 Name = name,
                 Quantity = quantity,
-                CreatedBy = userId
+                CreatedBy = userId,
+                Price = price
             };
 
 			getItems.Add(addItem);
