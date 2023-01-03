@@ -66,6 +66,12 @@ namespace InventoryMangementSystem.Data
             File.WriteAllText(userPath, json);
         }
 
+        public static User GetById(Guid Id)
+        {
+            var user = GetAllUsers().FirstOrDefault(x => x.Id == Id);
+            return user;
+        }
+
         /// <summary>
         /// 
         /// </summary>

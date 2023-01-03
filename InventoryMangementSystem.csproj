@@ -53,4 +53,8 @@
       <Folder Include="wwwroot\data\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="PSC.Blazor.Components.Chartjs" Version="6.0.35" />
+    </ItemGroup>
+
 </Project>

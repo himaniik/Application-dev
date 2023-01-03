@@ -50,6 +50,12 @@ namespace InventoryMangementSystem.Data
             File.WriteAllText(itemPath, json);
         }
         
+        public static Item GetById(Guid Id)
+        {
+            var item = GetAllItems().FirstOrDefault(x => x.Id == Id);
+            return item;
+        }
+
         /// <summary>
         /// 
         /// </summary>

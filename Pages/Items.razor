@@ -27,14 +27,31 @@
 					<td> @item.Price</td>
 					<td> @item.Quantity</td>
 					<td> @item.CreatedAt</td>
-					<td> @item.CreatedBy</td>
 					<td>
-						<button class="btn btn-outline-secondary" type="button" @onclick="()=>OpenUpdateItemDialog(item)">
+						@{
+							var user = UserService.GetById(item.CreatedBy);
+							<span>@user.Username</span>
+						}
+					</td>
+					<td>
+					@{
+						if(_globalState.User?.Role == Role.Admin){
+								<button class="btn btn-outline-secondary" type="button" @onclick="()=>OpenUpdateItemDialog(item)">
+									<span class="oi oi-pencil" /> &nbsp; Edit
+								</button>
+								<button class="btn btn-outline-danger" type="button" @onclick="()=>OpenDeleteItemDialog(item)">
+									<span class="oi oi-delete" /> &nbsp; Delete
+								</button>
+
+						}
+						else if (_globalState.User?.Role == Role.Staff)
+						{
+						<button class="btn btn-outline-secondary" type="button" @onclick="()=>OpenOrderItemDialog(item)">
 							<span class="oi oi-pencil" /> &nbsp; Edit
 						</button>
-						<button class="btn btn-outline-danger" type="button" @onclick="()=>OpenDeleteItemDialog(item)">
-							<span class="oi oi-delete" /> &nbsp; Delete
-						</button>
+						}
+					}
+						
 					</td>
 				</tr>
 			}
@@ -84,15 +101,33 @@
 	</ModalDialogBox>
 }
 
+@if (_showOrderItemDialog){
+	<ModalDialogBox Title="Order Items" Label="Order" OnClose="@OnOrderItem">
+		<form class="col g-3">
+			<div class="col-auto">
+				<label for="text" class="form-label">Name</label>
+				<input @bind="_item.Name" type="text" class="form-control">
+			</div>
+			<div class="col">
+				<label for="number" class="form-labeel">Quantity</label>
+				<input @bind="_order.Quantity" type="number" class="form-control" placeholder="Password">
+			</div>
+		</form>
+	</ModalDialogBox>
+}
+
 
 @code {
 	[CascadingParameter]
 	private GlobalState _globalState { get; set; }
 	private List<Item> _items { get; set; }
+	private List<Order> _orders { get; set; }
 	private Item _item { get; set; }
+	private Order _order { get; set; }
 	private bool _showAddItemsDialog { get; set; }
 	private bool _showUpdateItemsDialog { get; set; }
 	private bool _showDeleteItemDialog { get; set; }
+	private bool _showOrderItemDialog { get; set; }
 
 	private void OpenAddItemsDialog()
 	{
@@ -107,6 +142,12 @@
 	private void OpenDeleteItemDialog(Item item)
 	{
 		_showDeleteItemDialog = true;
+	}
+
+	private void OpenOrderItemDialog(Item item){
+		_item = item;
+		_order = new Order();
+		_showOrderItemDialog = true;
 	}
 
 
@@ -138,4 +179,15 @@
 		}
 	}
 
+	private void OnOrderItem(bool isCancel){
+		if (isCancel)
+		{
+			_showOrderItemDialog = false;
+		}
+		else
+		{
+			_orders = OrderService.CreateOrder(_globalState.User.Id, _item.Id, _order.Quantity);
+			_showOrderItemDialog = false;
+		}
+	}
 }

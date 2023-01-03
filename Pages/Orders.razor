@@ -7,6 +7,7 @@
 		<tr>
 			<th scope="col">Item Name </th>
 			<th scope="col">Quantity</th>
+			<th scope="col">Ordered Status</th>
 			<th scope="col">Ordered By</th>
 			<th scope="col">Ordered At</th>
 			<th></th>
@@ -17,53 +18,85 @@
 		@foreach (var order in _orders)
 		{
 			<tr>
-				
-					<td>@order.Quantity</td>
-				
-
-
-
-				<td><button>Place Order</button></td>
+				<td>
+					@{
+						var item = ItemService.GetById(order.ItemId);
+						<span>@item.Name</span>
+					}
+				</td>
+				<td> @order.Quantity</td>
+				<td>
+					@{
+						var status = order.IsApproved;
+						<span>@(status == true ? "Approved" : "Pending")</span>
+					}
+				</td>
+				<td>
+					@{
+						var user = UserService.GetById(order.OrderedBy);
+						<span>@user.Username</span>
+					}
+				</td>
+				<td> @order.OrderedAt</td>
+				<td>
+					@if (!order.IsApproved)
+					{
+						<button type="button" class="btn btn-success" @onclick="()=>OrderDialog(order)">Approve Order</button>
+					}
+					else
+					{
+						<button type="button" class="btn btn-success">Order Complete</button>
+					}
+				</td>
 			</tr>
 		}
 	</tbody>
 </table>
 
-<ModalDialogBox Title="PLace Order" Label="Submit" OnClose="OnPlaceOrder">
-	<form class="row g-3">
-		<div class="col-auto">
-			<label for="number" class="form-label">Quantity</label>
-			<input @bind="_order.Quantity" type="number" class="form-control-plaintext">
-		</div>
-		
-	</form>
-
-</ModalDialogBox>
+@if (_showPlaceOrderDialog)
+{
+	<ModalDialogBox Title="PLace Order" Label="Submit" OnClose="OnPlaceOrder">
+		<p>
+			Are you sure you want to approve this record?
+		</p>
+	</ModalDialogBox>
+}
 
 @code {
+	[CascadingParameter]
 	private GlobalState _globalState { get; set; }
+
 	private List<Order> _orders { get; set; }
+
 	private Order _order { get; set; }
+
+
 	private bool _showPlaceOrderDialog { get; set; }
-	private void OrderDialog()
+
+	protected override void OnInitialized()
 	{
-		_showPlaceOrderDialog = true;
-		_order = new Order();
+		_orders = OrderService.GetAllOrders();
 	}
 
-	private void OnPlaceOrder(bool isClosed) {
+
+	private void OrderDialog(Order order)
+	{
+		_order = order;
+		_showPlaceOrderDialog = true;
+	}
+
+	private void OnPlaceOrder(bool isClosed)
+	{
 		if (isClosed)
 		{
 			_showPlaceOrderDialog = false;
 		}
 		else
 		{
-			_orders = ItemService.CreateOrder(_globalState.User.Id, _order.Quantity);
+			_orders = OrderService.ApproveOrder(_globalState.User.Id, _order.Id, _order.Quantity);
 			_showPlaceOrderDialog = false;
 		}
 	}
-
-
-
-
 }
+
+

@@ -1,7 +1,57 @@
 ﻿@page "/homepage"
 
-<h2> Bike Inventory System </h2>
+<h2> Bike Service Center </h2>
+
+
+
+<Chart Config="_config1" @ref="_chart1"></Chart>
 
 @code {
+    private BarChartConfig _config1;
+    private Chart _chart1;
+    protected override void OnInitialized()
+    {
+        _config1 = new BarChartConfig()
+            {
+                Options = new Options()
+                {
+                    Plugins = new Plugins()
+                    {
+                        Legend = new Legend()
+                        {
+                            Align = Align.Center,
+                            Display = false,
+                            Position = LegendPosition.Right
+                        }
+                    },
+                    Scales = new Dictionary<string, Axis>()
+        {
+            {
+                Scales.XAxisId, new Axis()
+                {
+                    Stacked = true,
+                    Ticks = new Ticks()
+                    {
+                        MaxRotation = 0,
+                        MinRotation = 0
+                    }
+                }
+            },
+            {
+                Scales.YAxisId, new Axis()
+                {
+                    Stacked = true
+                }
+            }
+        }
+                }
+            };
+        
+      
+    }
+    
 
+    
+    
 }
+

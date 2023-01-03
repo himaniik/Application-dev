@@ -24,7 +24,12 @@
 			<tr>
 			<td> @user.Username </td>
 			<td> @user.Role </td>
-			<td> @user.CreatedBy </td>
+			<td>
+				@{
+					var creator = UserService.GetAllUsers().FirstOrDefault(x => x.Id == user.CreatedBy);
+					<span>@(creator == null ? "Administrator" : creator.Username)</span>
+				}
+			</td>
 			<td>
 				<button>Delete</button>
 				<button>Edit</button>
@@ -48,23 +53,28 @@
 				<label for="exampleInputPassword1" class="form-label">Password</label>
 				<input @bind="_user.PasswordHash" type="password" class="form-control" id="exampleInputPassword1">
 			</div>
-			<div class="mb-3 form-check">
-				<input @bind="_user.Role" type="checkbox" class="form-check-input" id="exampleCheck1">
-				<label class="form-check-label" for="exampleCheck1">Admin</label>
+			<div class="mb-3">
+				<label for="text" class="form-label">Choose a role to assign</label>
+				<div class="form-check mb-2">
+					<label class="form-check-label" for="userRole">@Role.Staff</label>
+					<input id="userRole" type="radio" class="form-check-input" name="role" value="@Role.Staff" @onchange="RoleChangeHandler" checked="@(_userRole == Role.Staff)">
+				</div>
+				<div class="form-check">
+					<input id="adminRole" type="radio" class="form-check-input" name="role" value="@Role.Admin" @onchange="RoleChangeHandler" checked="@(_userRole == Role.Admin)">
+					<label class="form-check-label" for="adminRole">@Role.Admin</label>
+				</div>
 			</div>
-				<div class="mb-3 form-check">
-				<input type="checkbox" class="form-check-input" id="exampleCheck1">
-				<label class="form-check-label" for="exampleCheck1">Staff</label>
-			</div>
+
 		</form>
 	</ModalDialogBox>
 }
 
 @code {
-
+	[CascadingParameter]
 	private GlobalState _globalState { get; set; }
 	private List<User> _users { get; set; }
 	private User _user { get; set; }
+	private Role _userRole { get; set; }
 	private bool _showAddUserDialog { get; set; }
 	private void OpenUserDialog(){
 		_showAddUserDialog = true;
@@ -82,8 +92,15 @@
 			_showAddUserDialog = false;
 		}
 		else{
-			_users = UserService.CreateUser(_globalState.User.Id, _user.Username, _user.PasswordHash, _user.Role);
+			_users = UserService.CreateUser(_globalState.User.Id, _user.Username, _user.PasswordHash, _userRole);
+			_showAddUserDialog = false;
 		}
 	}
+
+	private void RoleChangeHandler(ChangeEventArgs e)
+	{
+		_userRole = (Role)Enum.Parse(typeof(Role), e.Value.ToString());
+	}
+
 	//logical part
 }
