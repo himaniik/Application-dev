@@ -2,29 +2,26 @@
 
 @inject NavigationManager NavManager
 
-
-
-
 <form class="vh-100" @onsubmit="LoginUser">
 	<div class="container py-5 h-100">
 		<div class="row d-flex justify-content-center align-items-center h-100">
 			<div class="col-12 col-md-8 col-lg-6 col-xl-5">
 				<div class="card shadow-2-strong" style="border-radius: 1rem;">
 					<div class="card-body p-5 text-center">
-
-						<h3 class="mb-5">Bike Service Center</h3>
+						<img src="images/bike.jpg" width="130" height="100">	
+						<h3 class="mb-5" style="color:#005c9f">Bike Service Center</h3>
 
 						<div class="mb-3">
-							<label class="form-label">Username</label>
+							<label class="form-label" style="color:#005c9f">Username</label>
 							<input type="text" @bind="_username" class="form-control form-control-lg" />
 							
 						</div>
 
 						<div class="mb-3">
-							<label class="form-label" for="typePasswordX-2">Password</label>
+							<label class="form-label" for="typePasswordX-2" style="color:#005c9f">Password</label>
 							<input type="password" @bind="_password" class="form-control form-control-lg" />
 						</div>
-						<button type="submit" class="btn btn-primary">Login</button>
+						<button type="submit" class="btn btn-primary" style="background-color:#005c9f">Login</button>
 					</div>
 				</div>
 			</div>

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "u9U4oiq3uC+kK+y9o1O/b7rkkIi5NsryfkN8xIyJ9yg=",
+  "Hash": "0nM20cES8tFtmEHkK6mvnt1VJvrbfe2anPMuAqOlBZc=",
   "Source": "InventoryMangementSystem",
   "BasePath": "/",
   "Mode": "Root",
@@ -916,6 +916,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\Himani\\Desktop\\sem-5\\app_d\\Application-dev\\wwwroot\\images\\bike.jpg",
+      "SourceId": "InventoryMangementSystem",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Himani\\Desktop\\sem-5\\app_d\\Application-dev\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "images/bike.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\bike.jpg"
     },
     {
       "Identity": "C:\\Users\\Himani\\Desktop\\sem-5\\app_d\\Application-dev\\wwwroot\\index.html",
